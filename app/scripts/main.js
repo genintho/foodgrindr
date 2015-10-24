@@ -1,39 +1,27 @@
-console.log('\'Allo \'Allo!'); // eslint-disable-line no-console
-
-
-var data = localStorage.getItem('data');
-if(data !== null ){
-    try{
-        data = JSON.parse( data );
-        console.log('success')
-    }catch(e ){
-
-    }
-}
-if (data === null ) {
-    data = {
-        round: 1
-    };
-    data.restaurant = [{
-            id: 1,
-            name: 'Chipotle',
-            visit: ( (+ new Date()) - 300000000 )
-        }, {
-            id: 2,
-            name: 'Super Duper',
-            visit: ( (+ new Date()) - 100000000 )
-        },
-        {
-            id: 3,
-            name: 'Jules Vernes',
-            visit: ( (+ new Date()) - 3000 )
-        },
-        {
-            id: 4,
-            name: 'Fleur de sel'
-        }
-    ];
-}
+/*global Data */
+var data = Data.load();
+//if(!data) {
+//    data = {
+//        round: 1
+//    };
+//    data.restaurant = [{
+//        id: 1,
+//        name: 'Chipotle',
+//        visit: ( (+ new Date()) - 300000000 )
+//    }, {
+//        id: 2,
+//        name: 'Super Duper',
+//        visit: ( (+ new Date()) - 100000000 )
+//    }, {
+//        id: 3,
+//        name: 'Jules Vernes',
+//        visit: ( (+ new Date()) - 3000 )
+//    },
+//    {
+//        id: 4,
+//        name: 'Fleur de sel'
+//    }];
+//}
 
 data.restaurant.sort(function(a,b){
     return a.visit < b.visit;
@@ -45,18 +33,18 @@ $('selection').innerText = pickedPlace.name;
 $('confirm' ).addEventListener('click', function(){
     pickedPlace.round = data.round;
     pickedPlace.visit = + new Date();
-    saveData();
+    Data.save(data);
     refreshTable();
 });
 
-$('add' ).addEventListener('submit', function(e){
+$('add' ).addEventListener('submit', function(){
     event.preventDefault();
     var newPlaceName = this.elements[0].value;
     data.restaurant.push({
         id: + new Date(),
         name: newPlaceName.trim()
     });
-    saveData();
+    Data.save(data);
     refreshTable();
 });
 
@@ -71,33 +59,17 @@ function pick(){
         if(place.round === undefined || place.round < currentRound){
             return true;
         }
-        if(place.visit === undefined ){
-            return true;
-        }
-        return false;
+        return place.visit === undefined;
     });
 
     if( filtered.length === 0 ){
-        console.log('nothing to pick, reset round!')
         filtered = data.restaurant;
         data.round++;
-        saveData();
+        Data.save(data);
     }
 
     var pickedIndex = getRandomIntInclusive(0, filtered.length );
-    console.log(filtered.length, pickedIndex);
     return filtered[pickedIndex];
-}
-
-
-function saveData(){
-    try{
-        localStorage.setItem( 'data', JSON.stringify( data ) );
-        console.log( 'save data', JSON.stringify( data ) );
-        localStorage.setItem( 'data', JSON.stringify( data ) );
-    }catch(e){
-        console.log(e);
-    }
 }
 
 // Returns a random integer between min (included) and max (included)
@@ -123,4 +95,4 @@ function $(id){
 $('clear').addEventListener('click', function(){
     localStorage.removeItem('data');
     window.location.reload();
-})
+});
