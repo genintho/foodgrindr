@@ -1,4 +1,4 @@
-var Data = {
+window.Data = {
     /**
      * @return {AppData}
      */
@@ -23,5 +23,32 @@ var Data = {
         }catch(e){
             console.alert(e); // eslint-disable-line no-console
         }
+    },
+
+    pick: function(data){
+        if(data.restaurants.length === 0 ){
+            return null;
+        }
+
+        var filtered = this.getPickable(data);
+
+        if( filtered.length === 0 ){
+            filtered = data.restaurants;
+            data.round++;
+            this.save(data);
+        }
+
+        var pickedIndex = Math.floor( Math.random() * filtered.length );
+        return filtered[pickedIndex];
+    },
+
+    getPickable: function(data){
+        var currentRound = data.round;
+        return data.restaurants.filter(function(place){
+            if(place.round === undefined || place.round < currentRound){
+                return true;
+            }
+            return place.visit === undefined;
+        });
     }
 };

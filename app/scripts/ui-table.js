@@ -1,4 +1,5 @@
-var Table = {
+/* global $*/
+window.Table = {
     refresh: function(restaurants){
         var $list= $('list-container');
         if(restaurants.length === 0 ){

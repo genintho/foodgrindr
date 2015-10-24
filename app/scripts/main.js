@@ -1,12 +1,10 @@
 /*global Data, Table */
 
-document.addEventListener("DOMContentLoaded", function(event) {
-    bindEvents();
-
+document.addEventListener("DOMContentLoaded", function() {
     var data = Data.load();
     Table.refresh(data.restaurants);
 
-    var pickedPlace = pick(data);
+    var pickedPlace = Data.pick(data);
     if(pickedPlace){
         $( 'selection-label' ).innerText = pickedPlace.name;
     }
@@ -14,25 +12,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
         $('selection-container' ).classList.add('hidden');
     }
 
-});
-
-function bindEvents(){
-    bindConfirm();
+    bindConfirm(pickedPlace);
     bindAdd();
     bindClear();
-}
+});
 
-function bindConfirm(){
+function bindConfirm(pickedPlace){
     $( 'confirm' ).addEventListener( 'click', function (){
+        var data = Data.load();
         pickedPlace.round = data.round;
         pickedPlace.visit = +new Date();
         Data.save( data );
-        refreshTable();
     } );
 }
 
 function bindAdd(){
-    $('add').addEventListener('submit', function(){
+    $('add').addEventListener('submit', function(event){
         event.preventDefault();
         var newPlaceName = this.elements[0].value;
         var data = Data.load();
@@ -53,43 +48,11 @@ function bindClear(){
     } );
 }
 
-
-
-function pick(data){
-    var currentRound = data.round;
-    if(data.restaurants.length === 0 ){
-        return null;
-    }
-
-    var filtered = data.restaurants.filter(function(place){
-        if(place.round === undefined || place.round < currentRound){
-            return true;
-        }
-        return place.visit === undefined;
-    });
-
-    if( filtered.length === 0 ){
-        filtered = data.restaurant;
-        data.round++;
-        Data.save(data);
-    }
-
-    var pickedIndex = getRandomIntInclusive(0, filtered.length );
-    return filtered[pickedIndex];
-}
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Utils
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-// Returns a random integer between min (included) and max (included)
-// Using Math.round() will give you a non-uniform distribution!
-function getRandomIntInclusive(min, max) {
-    return Math.floor( Math.random() * (max - min)) + min;
-}
-
 
 function $(id){
     return document.getElementById(id);
