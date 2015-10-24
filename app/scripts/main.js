@@ -1,39 +1,67 @@
-/*global Data */
-var data = Data.load();
+/*global Data, Table */
 
-data.restaurant.sort(function(a,b){
-    return a.visit < b.visit;
+document.addEventListener("DOMContentLoaded", function(event) {
+    bindEvents();
+
+    var data = Data.load();
+    Table.refresh(data.restaurants);
+
+    var pickedPlace = pick(data);
+    if(pickedPlace){
+        $( 'selection-label' ).innerText = pickedPlace.name;
+    }
+    else{
+        $('selection-container' ).classList.add('hidden');
+    }
+
 });
 
-var pickedPlace = pick();
-$('selection').innerText = pickedPlace.name;
+function bindEvents(){
+    bindConfirm();
+    bindAdd();
+    bindClear();
+}
 
-$('confirm' ).addEventListener('click', function(){
-    pickedPlace.round = data.round;
-    pickedPlace.visit = + new Date();
-    Data.save(data);
-    refreshTable();
-});
+function bindConfirm(){
+    $( 'confirm' ).addEventListener( 'click', function (){
+        pickedPlace.round = data.round;
+        pickedPlace.visit = +new Date();
+        Data.save( data );
+        refreshTable();
+    } );
+}
 
-$('add' ).addEventListener('submit', function(){
-    event.preventDefault();
-    var newPlaceName = this.elements[0].value;
-    data.restaurant.push({
-        id: + new Date(),
-        name: newPlaceName.trim()
+function bindAdd(){
+    $('add').addEventListener('submit', function(){
+        event.preventDefault();
+        var newPlaceName = this.elements[0].value;
+        var data = Data.load();
+        data.restaurants.push({
+            id: + new Date(),
+            name: newPlaceName.trim()
+        });
+        Data.save(data);
+        Table.refresh(data.restaurants);
+        this.elements[0].value = '';
     });
-    Data.save(data);
-    refreshTable();
-});
+}
 
-refreshTable();
+function bindClear(){
+    $( 'clear' ).addEventListener( 'click', function (){
+        localStorage.removeItem( 'data' );
+        window.location.reload();
+    } );
+}
 
 
 
-
-function pick(){
+function pick(data){
     var currentRound = data.round;
-    var filtered = data.restaurant.filter(function(place){
+    if(data.restaurants.length === 0 ){
+        return null;
+    }
+
+    var filtered = data.restaurants.filter(function(place){
         if(place.round === undefined || place.round < currentRound){
             return true;
         }
@@ -50,27 +78,20 @@ function pick(){
     return filtered[pickedIndex];
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Utils
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 // Returns a random integer between min (included) and max (included)
 // Using Math.round() will give you a non-uniform distribution!
 function getRandomIntInclusive(min, max) {
     return Math.floor( Math.random() * (max - min)) + min;
 }
-function refreshTable(){
-    document.getElementById('list').innerHTML = data.restaurant.map(function(elem){
-        var dateString = '';
-        if( elem.visit ){
-            var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            dateString = new Date(elem.visit).toLocaleDateString(navigator.language, options)
-        }
 
-        return '<tr><td>' + elem.name + '</td><td>' + dateString + '</td><td>'+elem.round+'</td></tr>';
-    } ).join('');
-}
+
 function $(id){
     return document.getElementById(id);
 }
 
-$('clear').addEventListener('click', function(){
-    localStorage.removeItem('data');
-    window.location.reload();
-});

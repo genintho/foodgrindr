@@ -27,11 +27,8 @@
             place you tell us you like
         </p>
     </div>
-    <div>
-        <h1 id="selection"></h1>
-    </div>
-
-    <div>
+    <div id="selection-container">
+        <h1 id="selection-label"></h1>
         <button id="confirm">Let's roll</button>
         <button id="skip">Not this time</button>
     </div>
@@ -41,19 +38,20 @@
         <input type="submit" value="Add">
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Where</th>
-                <th>When</th>
-                <th>x</th>
-            </tr>
-        </thead>
-        <tbody id="list"></tbody>
-    </table>
+    <div id="list-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Where</th>
+                    <th>When</th>
+                    <th>x</th>
+                </tr>
+            </thead>
+            <tbody id="list"></tbody>
+        </table>
 
-    <button id="clear">Clear</button>
-
+        <button id="clear">Clear</button>
+    </div>
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
 <!-- endbower -->
@@ -64,6 +62,7 @@
 <!-- build:js scripts/main.js -->
     <script src="//localhost:35729/livereload.js"></script>
     <script src="scripts/data.js"></script>
+    <script src="scripts/ui-table.js"></script>
     <script src="scripts/main.js"></script>
 <!-- endbuild -->
 

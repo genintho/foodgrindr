@@ -1,4 +1,7 @@
 var Data = {
+    /**
+     * @return {AppData}
+     */
     load: function(){
         var data = localStorage.getItem('data');
         if(data !== null ){
@@ -8,6 +11,10 @@ var Data = {
                 console.alert(e); // eslint-disable-line no-console
             }
         }
+        return {
+            round: 1,
+            restaurants: []
+        };
     },
 
     save: function(data){
