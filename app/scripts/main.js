@@ -1,27 +1,5 @@
 /*global Data */
 var data = Data.load();
-//if(!data) {
-//    data = {
-//        round: 1
-//    };
-//    data.restaurant = [{
-//        id: 1,
-//        name: 'Chipotle',
-//        visit: ( (+ new Date()) - 300000000 )
-//    }, {
-//        id: 2,
-//        name: 'Super Duper',
-//        visit: ( (+ new Date()) - 100000000 )
-//    }, {
-//        id: 3,
-//        name: 'Jules Vernes',
-//        visit: ( (+ new Date()) - 3000 )
-//    },
-//    {
-//        id: 4,
-//        name: 'Fleur de sel'
-//    }];
-//}
 
 data.restaurant.sort(function(a,b){
     return a.visit < b.visit;
